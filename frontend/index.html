@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Charlotte's Digit Recognizer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="icon" type="image/png" href="images/favicon.png"/>
+<!--    <link href=""/>-->
+</head>
+<body>
+<header>
+    <nav>
+        <ul class="nav-links">
+            <li><a class="nav-link current-page" href=" ">Digit Recognizer</a></li>
+            <li><a class="nav-link" href="https://github.com/anna-charlotte/digit_recognizer/tree/master">Code on Github</a></li>
+            <li><a class="nav-link" href="http://yann.lecun.com/exdb/mnist/">MNIST Database</a></li>
+            <li><a class="nav-link" href="model_information.html">Model Information</a></li>
+
+        </ul>
+    </nav>
+</header>
+<main>
+    <section class="presentation">
+        <div class="wrapper">
+            <div class="title">
+                <h1 style="color: azure; font-size: xxx-large; margin-bottom: 2px;">Charlotte's<br />Handwritten Digit Recognizer</h1>
+                <h7 style="color: azure; font-size: 20px; "><br/>Powered by a neural network implemented with keras and tensorflow.js</h7>
+            </div>
+            <div class="body_center">
+                <div class="app">
+                    <div class="controls">
+                        <div class="controls_title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write digit in here:&nbsp;&nbsp;&nbsp;</div>
+                        <div>
+                            <button class="buttons" id="reset-canvas" onClick="clearCanvas()">Reset</button>
+                            <button class="buttons" id="show-example" onClick="showExample(listOfMainCoordinates)">Show Example</button>
+                        </div>
+                    </div>
+                    <canvas id="canvas" width="364" height="364"></canvas>
+                </div>
+                <div class="classification">
+                    <div>
+                        <button id="save-canvas" onClick="classify()">Classify</button>
+                    </div>
+                    <svg id="barChart" width="364" height="375">
+                        <rect class="barBackground" x="50" y="08" width="335" height="25"/>
+                        <rect class="barBackground" x="50" y="45" width="335" height="25"/>
+                        <rect class="barBackground" x="50" y="82" width="335" height="25"/>
+                        <rect class="barBackground" x="50" y="119" width="335" height="25"/>
+                        <rect class="barBackground" x="50" y="156" width="335" height="25"/>
+                        <rect class="barBackground" x="50" y="193" width="335" height="25"/>
+                        <rect class="barBackground" x="50" y="230" width="335" height="25"/>
+                        <rect class="barBackground" x="50" y="267" width="335" height="25"/>
+                        <rect class="barBackground" x="50" y="304" width="335" height="25"/>
+                        <rect class="barBackground" x="50" y="341" width="335" height="25"/>
+
+                        <rect class="bar" id="bar0" x="50" y="08" width="50" height="25"/>
+                        <rect class="bar" id="bar1" x="50" y="45" width="50" height="25"/>
+                        <rect class="bar" id="bar2" x="50" y="82" width="50" height="25"/>
+                        <rect class="bar" id="bar3" x="50" y="119" width="50" height="25"/>
+                        <rect class="bar" id="bar4" x="50" y="156" width="50" height="25"/>
+                        <rect class="bar" id="bar5" x="50" y="193" width="50" height="25"/>
+                        <rect class="bar" id="bar6" x="50" y="230" width="50" height="25"/>
+                        <rect class="bar" id="bar7" x="50" y="267" width="50" height="25"/>
+                        <rect class="bar" id="bar8" x="50" y="304" width="50" height="25"/>
+                        <rect class="bar" id="bar9" x="50" y="341" width="50" height="25"/>
+
+
+                        <rect class="classLabels" id="classLabel0" x="22" y="08" width="25" height="25"/>
+                        <rect class="classLabels" id="classLabel1" x="22" y="45" width="25" height="25"/>
+                        <rect class="classLabels" id="classLabel2" x="22" y="82" width="25" height="25"/>
+                        <rect class="classLabels" id="classLabel3" x="22" y="119" width="25" height="25"/>
+                        <rect class="classLabels" id="classLabel4" x="22" y="156" width="25" height="25"/>
+                        <rect class="classLabels" id="classLabel5" x="22" y="193" width="25" height="25"/>
+                        <rect class="classLabels" id="classLabel6" x="22" y="230" width="25" height="25"/>
+                        <rect class="classLabels" id="classLabel7" x="22" y="267" width="25" height="25"/>
+                        <rect class="classLabels" id="classLabel8" x="22" y="304" width="25" height="25"/>
+                        <rect class="classLabels" id="classLabel9" x="22" y="341" width="25" height="25"/>
+
+                        <text class=classLabelsText id="classLabelText0" x="28" y="26">0</text>
+                        <text class=classLabelsText id="classLabelText1" x="28" y="63">1</text>
+                        <text class=classLabelsText id="classLabelText2" x="28" y="100">2</text>
+                        <text class=classLabelsText id="classLabelText3" x="28" y="137">3</text>
+                        <text class=classLabelsText id="classLabelText4" x="28" y="174">4</text>
+                        <text class=classLabelsText id="classLabelText5" x="28" y="211">5</text>
+                        <text class=classLabelsText id="classLabelText6" x="28" y="248">6</text>
+                        <text class=classLabelsText id="classLabelText7" x="28" y="285">7</text>
+                        <text class=classLabelsText id="classLabelText8" x="28" y="322">8</text>
+                        <text class=classLabelsText id="classLabelText9" x="28" y="359">9</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <script src="main.js"></script>
+
+    </section>
+</main>
+</body>
+</html>

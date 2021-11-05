@@ -1,0 +1,213 @@
+body {
+    background-image: url("./images/background_img.jpg");
+    background-color: rgba(0, 0, 0, 0.75);
+    background-blend-mode: overlay;
+    background-repeat: repeat-y;
+    background-size:cover;
+    background-attachment:fixed;
+    min-height: 800px;
+    font-family: Copperplate;
+    text-align: center;
+}
+
+header {
+    display: flex;
+    height: 5vh;
+    width: 90%;
+    margin: auto;
+    align-items: center;
+}
+
+* {
+    /*outline: solid rgba(200, 100, 240, 0.4);*/
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+nav {
+    flex: 2;
+}
+
+.nav-links {
+    margin-left: 100px;
+    margin-right: 100px;
+    justify-content: space-around;
+    list-style: none;
+    display: flex;
+}
+
+.current-page {
+    border: 2px solid rgba(220,246,255,0.8);;
+    padding: 5px 15px 5px 15px;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.nav-link {
+    color: rgba(220,246,255,255);
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.label {
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.body_center {
+    width: 772px;
+    height: 450px;
+    margin: auto;
+
+}
+
+.presentation {
+    width: 80%;
+    margin: auto;
+    min-height: 100vh;
+    align-items: center;
+    alignment: center;
+}
+
+.title {
+    margin-top: 1px;
+    margin-bottom: 10px;
+    padding: 1.5%;
+    text-shadow: 2px 2px 15px #000;
+}
+
+.controls_title {
+    margin: auto;
+    padding: 2.5%;
+    font-size: 17px;
+}
+
+.controls {
+    background-color: rgba(225,246,250,255);
+    box-shadow: -3px 2px 9px 6px black;
+    border-radius: 6px 6px 2px 2px;
+    width: 364px;
+    height: 53px;
+    padding: 1%;
+    display: flex;
+    justify-content: space-around;
+    align-text:left;
+}
+
+.app {
+    background-color: paleturquoise;
+    width: 364px;
+    float: left;
+    margin-top: 20px
+}
+
+
+.app .controls .type label {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+canvas {
+    box-shadow: -4px 13px 15px 9px;
+    cursor: crosshair;
+}
+
+.classification {
+    float: left;
+    margin-left: 40px;
+}
+.buttons {
+    font-family: Copperplate;
+    font-size: 11px;
+    margin-right: 3px;
+    margin-left: 10px;
+    margin-bottom: 3px;
+    padding: 1.8%;
+    height: 20px;
+    width: 90px;
+    display: block;
+}
+
+#save-canvas {
+    width: 100px;
+    height: 44px;
+    padding: 5px 10px;
+    font-family: Copperplate;
+    cursor: pointer;
+    display: flex;
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    box-shadow: -3px 2px 9px 6px;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#save-canvas:hover {
+    box-shadow: 0px 0px 1px 1px darkorange;
+    background-color: #dadada;
+}
+
+.bar {
+    fill: rgba(254, 133, 1, 0.85);
+    stroke: #dd4400;
+    stroke-width: 1px;
+    box-shadow: 2px 2px 5px -1px #111111;
+}
+
+.barBackground {
+    fill: rgba(255, 250, 250, 0.55);
+    box-shadow: 2px 2px lightgreen;
+
+}
+
+.classLabels {
+    fill: white;
+    color: #111111;
+    stroke: gray;
+    border: 1px solid lightcoral;
+}
+
+.classLabelsText {
+    font-size: 20px;
+    fill: black;
+}
+
+
+.shadow {
+    filter: drop-shadow(0px 0px 2px #4BBDFF) drop-shadow(0px 0px 3px white) drop-shadow(0px 0px 4px white);
+    stroke: #0B9DDF;
+    stroke-width: 1px;
+}
+
+.model_information {
+    color: black;
+    text-align: left;
+    margin: auto;
+}
+
+.information {
+    background-color: rgba(255,255,255,0.7);
+    margin: auto;
+    width: 65%;
+    min-height: 200px;
+    border-radius: 5px;
+    padding: 1.5%;
+    margin-bottom: 30px;
+}
+td {
+    min-width: 100px;
+    min-height: 10px;
+    vertical-align: top;
+    padding: 2px;
+    line-height: 150%;
+}
+table {
+    width: 90%;
+}
+.first_col {
+    width: 5%;
+}

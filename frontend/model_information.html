@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Charlotte's Digit Recognizer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="icon" type="image/png" href="images/favicon.png"/>
+</head>
+<body>
+<header>
+    <nav>
+        <ul class="nav-links">
+            <li><a class="nav-link" href="index.html">Digit Recognizer</a></li>
+            <li><a class="nav-link" href="https://github.com/anna-charlotte/digit_recognizer/tree/master">Code on Github</a></li>
+            <li><a class="nav-link" href="http://yann.lecun.com/exdb/mnist/">MNIST Database</a></li>
+            <li><a class="nav-link current-page" href=" ">Model Information</a></li>
+
+        </ul>
+    </nav>
+</header>
+<main>
+    <div class="title">
+        <h1 style="color: azure; font-size: xxx-large; margin-bottom: 2px;">Charlotte's<br />Handwritten Digit Recognizer</h1>
+        <h7 style="color: azure; font-size: 20px; "><br/>Powered by a neural network implemented with keras and tensorflow.js</h7>
+    </div>
+    <div class="model_information">
+        <div class="information" id="data">
+            <table>
+                <tr>
+                    <td class="first_col">DATA:</td>
+                    <td colspan="2">70 000 images of size 28 x 28 with 3 channels consisting of:</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        42 000 images Provided by the mnist <br/>database<br/>
+                        <img src="images/examples_data/data_mnist.jpg" width="300">
+                    </td>
+                    <td>
+                        28 000 images of generated data<br/><br/>
+                        <img src="images/examples_data/data_generated.jpg" width="300">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="information" id="model">
+            <table>
+                <tr>
+                    <td class="first_col">MODEL:</td>
+                    <td>
+                        Convolutional Neural Network: <br/>
+                        Keras Sequential Model with 6 hidden layers<br/>
+                        <img src="images/keras_model.jpg" width="440" ><br/>
+                        <u>Optimizer:</u> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adam<br/>
+                        <u>Learning Rate:</u> &nbsp;&nbsp;0.001<br/>
+                        <u>Loss:</u> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Binary Crossentropy<br/>
+
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+        <div class="information" id="evaluation">
+            <table>
+                <tr>
+                    <td>EVALUATION:</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="images/evaluation/evaluation_scores.png" width="440" ><br/>
+                        <img src="images/evaluation/evaluation_losses.png" width="440" ><br/>
+                        <img src="images/evaluation/evaluation_others.png" width="440" ><br/>
+                        <img src="images/evaluation/eval_chart_confusion_matrix.jpg" width="440" >
+                    </td>
+                    <td>
+                        <img src="images/evaluation/eval_chart_class_distr.jpg" width="440" ><br/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>
