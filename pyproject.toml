@@ -5,7 +5,7 @@ description = "charlottee's handwritten digit recognizer"
 authors = ["anna-charlotte <chgerhaher@yahoo.com>"]
 
 [tool.poetry.dependencies]
-python = "3.8"
+python = "3.8.10"
 numpy = "^1.23.1"
 pandas = "^1.4.3"
 metriculous = "^0.3.0"
