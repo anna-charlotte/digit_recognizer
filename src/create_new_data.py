@@ -19,8 +19,9 @@ def save_image_with_character(
 def main():
     img_height, img_width = 28, 28
     destination_dir = (DATA_DIR / "generated_data")
+    print(f"Generting additional data and saving it to: {destination_dir}")
 
-    Path.mkdir(destination_dir, parents=True)
+    Path.mkdir(destination_dir, parents=True, exist_ok=True)
     os.chdir(destination_dir)
 
     font_sizes = [16, 18, 20, 22]
@@ -110,6 +111,8 @@ def main():
                                         font=font,
                                         title=title,
                                     )
+
+    print("Finished generating additional data ...")
 
 
 if __name__ == "__main__":

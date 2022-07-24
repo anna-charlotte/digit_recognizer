@@ -20,7 +20,7 @@ from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.python.keras.losses import Loss
 from tensorflow.python.keras.optimizer_v2.optimizer_v2 import OptimizerV2
 
-DATA_DIR = Path(__file__).parent.parent / "data"
+DATA_DIR = Path(__file__).parent.parent.absolute() / "data"
 
 @dataclass
 class DataSplits:
@@ -217,8 +217,8 @@ def save_predictions_for_submission(
             count += 1
 
 
-def save_this_script(destination_dir: Path):
-    shutil.copy(__file__, destination_dir)
+def save_file(file: Path, destination_dir: Path):
+    shutil.copy(file, destination_dir)
 
 
 def save_model_comparison_in_cwd(x_test, y_test, model, path: Path, class_names):
@@ -368,13 +368,13 @@ def main(mnist_height: int = 28, mnist_width: int = 28, mnist_num_classes: int =
     experiment_dir = (
             Path(__file__).parent.parent
             / "experiments"
-            / f'experiment_{time.strftime("%Y-%m-%d-%H%M%S")}'
+            / f"experiment_{time.strftime('%Y-%m-%d-%H%M%S')}"
     )
 
-    Path.mkdir(experiment_dir)
+    Path.mkdir(experiment_dir, exist_ok=True, parents=True)
+    save_file(file=Path(__file__), destination_dir=experiment_dir)
     os.chdir(experiment_dir)
 
-    save_this_script(experiment_dir)
 
     print("Loading training CSV file...")
     df_train = pd.read_csv(DATA_DIR / "mnist_train.csv")
@@ -398,7 +398,6 @@ def main(mnist_height: int = 28, mnist_width: int = 28, mnist_num_classes: int =
     for i in range(10):
         display_image(x_train[i], title=f"{i}_img.jpg")
         print("display")
-        # display_image(x_train[i], title=f"Index: {i}   Label: {y_train[i]}")
 
     print("Split labeled data into training, validation and test set...")
     data_splits = split_into_train_val_test_set(
