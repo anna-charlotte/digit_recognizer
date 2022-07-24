@@ -17,13 +17,9 @@ def save_image_with_character(
 
 def main():
     img_height, img_width = 28, 28
-    destination_dir = (
-        Path(__file__).parent.parent
-        / "data_generated"
-        / f'data_generated_{time.strftime("%Y-%m-%d-%H%M%S")}'
-    )
+    destination_dir = (DATA_DIR / "generated_data")
 
-    Path.mkdir(destination_dir)
+    Path.mkdir(destination_dir, parents=True)
     os.chdir(destination_dir)
 
     font_sizes = [16, 18, 20, 22]

@@ -1,6 +1,5 @@
 import math
 import os
-import random
 import re
 import shutil
 import time
@@ -21,6 +20,7 @@ from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.python.keras.losses import Loss
 from tensorflow.python.keras.optimizer_v2.optimizer_v2 import OptimizerV2
 
+DATA_DIR = Path(__file__).parent.parent / "data"
 
 @dataclass
 class DataSplits:
@@ -346,7 +346,7 @@ def trial_run(
     # predict
     if save_predictions:
         print("Loading test CSV file...")
-        df_submission = pd.read_csv(Path(__file__).parent.parent / "data/test.csv")
+        df_submission = pd.read_csv(DATA_DIR / "mnist_test.csv")
         save_predictions_for_submission(
             df_submission=df_submission,
             model=model,
@@ -364,9 +364,7 @@ def trial_run(
         )
 
 
-def main(mnist_height: int = 28, mnist_width: int = 28, mnist_num_classes: int = 10,
-         use_sample_data: bool = False
-         ):
+def main(mnist_height: int = 28, mnist_width: int = 28, mnist_num_classes: int = 10):
     experiment_dir = (
             Path(__file__).parent.parent
             / "experiments"
@@ -379,25 +377,15 @@ def main(mnist_height: int = 28, mnist_width: int = 28, mnist_num_classes: int =
     save_this_script(experiment_dir)
 
     print("Loading training CSV file...")
-    if use_sample_data:
-        df_train = pd.read_csv(Path(__file__).parent.parent / "data/train_sample.csv")
-    else:
-        df_train = pd.read_csv(Path(__file__).parent.parent / "data/train.csv")
+    df_train = pd.read_csv(DATA_DIR / "mnist_train.csv")
 
     print("Loading generated images...")
-    if use_sample_data:
-        df_train_generated_data = read_in_images_as_dataframe(
-            (Path(__file__).parent.parent / "data_generated/test_data_generated/"),
-            img_height=mnist_height,
-            img_width=mnist_width,
-        )
-    else:
-        df_train_generated_data = read_in_images_as_dataframe(
-            (Path(
-                __file__).parent.parent / "data_generated/data_generated_2021-10-20-120446/"),
-            img_height=mnist_height,
-            img_width=mnist_width,
-        )
+
+    df_train_generated_data = read_in_images_as_dataframe(
+        (DATA_DIR / "generated_data"),
+        img_height=mnist_height,
+        img_width=mnist_width,
+    )
 
     print("Converting data frames to arrays...")
     x_train, y_train = raw_df_to_x_y(
@@ -424,7 +412,6 @@ def main(mnist_height: int = 28, mnist_width: int = 28, mnist_num_classes: int =
     )
 
     # https://keras.io/api/applications/#usage-examples-for-image-classification-models
-
     def make_simple_model() -> Sequential:
         return make_simple_cnn(
             input_shape=(mnist_height, mnist_width, 3), num_classes=mnist_num_classes
