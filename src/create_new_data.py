@@ -3,6 +3,7 @@ import time
 from pathlib import Path
 
 from PIL import ImageDraw, ImageFont, Image
+from digit_recognizer import DATA_DIR
 
 
 def save_image_with_character(
