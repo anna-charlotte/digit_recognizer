@@ -2,13 +2,14 @@ import os
 import time
 from pathlib import Path
 
-from PIL import ImageDraw, ImageFont, Image
+from PIL import Image, ImageDraw, ImageFont
+
 from digit_recognizer import DATA_DIR
 
 
 def save_image_with_character(
-    width: int, height: int, x: int, y: int, letter: str, font, title: str = "image"
-):
+    width: int, height: int, x: int, y: int, letter: str, font: str, title: str = "image"
+) -> None:
     image = Image.new("L", (width, height), (0,))
     draw = ImageDraw.Draw(image)
 
@@ -16,9 +17,9 @@ def save_image_with_character(
     image.save(title)
 
 
-def main():
+def main() -> None:
     img_height, img_width = 28, 28
-    destination_dir = (DATA_DIR / "generated_data")
+    destination_dir = DATA_DIR / "generated_data"
     print(f"Generting additional data and saving it to: {destination_dir}")
 
     Path.mkdir(destination_dir, parents=True, exist_ok=True)
@@ -83,24 +84,18 @@ def main():
 
     for root, directories, files in os.walk(fonts_dir, topdown=True):
         for filename in files:
-            if not any(
-                filename.startswith(x) for x in (exclude + exclude_supplemental_dir)
-            ):
+            if not any(filename.startswith(x) for x in (exclude + exclude_supplemental_dir)):
                 for font_size in font_sizes:
                     for digit in digits:
                         if digit != "0" or (
                             not any(
                                 filename.startswith(x)
-                                for x in (
-                                    exclude_for_zero + exclude_supplemental_dir_for_zero
-                                )
+                                for x in (exclude_for_zero + exclude_supplemental_dir_for_zero)
                             )
                         ):
                             for x in x_coordinates:
                                 for y in y_coordinates:
-                                    font = ImageFont.truetype(
-                                        fonts_dir + filename, font_size
-                                    )
+                                    font = ImageFont.truetype(fonts_dir + filename, font_size)
                                     title = f"class{digit}_{filename}_{font_size}_{x}_{y}.jpg"
                                     save_image_with_character(
                                         width=img_width,

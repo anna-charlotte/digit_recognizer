@@ -1,45 +1,36 @@
-import numpy as np
-import metriculous
 from datetime import datetime
-import matplotlib.pyplot as plt
-import pandas as pd
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+import metriculous
+import numpy as np
+import pandas as pd
 import tensorflow as tf
 
 from digit_recognizer import (
-    stack_to_rgb_image,
-    save_predictions_for_submission,
-    split_into_train_val_test_set,
     multiply_pixels,
     raw_df_to_x_y,
-    perform_data_augmentation,
     read_in_images_as_dataframe,
     save_model_comparison_in_cwd,
+    split_into_train_val_test_set,
+    stack_to_rgb_image,
 )
 
 
-def test_stack_to_rgb_image():
+def test_stack_to_rgb_image() -> None:
     image = np.array([[0, 1, 2], [5, 6, 7]])
     stacked = stack_to_rgb_image(image)
     np.testing.assert_allclose(
         stacked,
-        np.array(
-            [[[0, 0, 0], [1, 1, 1], [2, 2, 2]], [[5, 5, 5], [6, 6, 6], [7, 7, 7]]]
-        ),
+        np.array([[[0, 0, 0], [1, 1, 1], [2, 2, 2]], [[5, 5, 5], [6, 6, 6], [7, 7, 7]]]),
     )
+    
 
-
-def test_save_predictions_for_submission():
-    path = "../predictions/"
-    predictions = pd.DataFrame([[1, 2, 3], [6, 3, 1], [1, 9, 1]])
-    save_predictions_for_submission(predictions=predictions, path_to_dir=path)
-
-
-def test_split_into_train_and_val_set():
+def test_split_into_train_and_val_set() -> None:
     x = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
     y = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-    val_split = 0.6
-    datasplit = split_into_train_val_test_set(x, y, validation_split=val_split)
+    val_split = 0.4
+    datasplit = split_into_train_val_test_set(x, y, validation_percentage=val_split)
 
     print(datasplit.x_train)
     print(datasplit.y_train)
@@ -51,9 +42,9 @@ def test_split_into_train_and_val_set():
     np.testing.assert_allclose(datasplit.x_val, datasplit.y_val)
 
 
-def test_multiply_pixels():
+def test_multiply_pixels() -> None:
     image = np.array([[1, 2], [3, 4]])
-    new_image = multiply_pixels(image=image, vertical=2, horizontal=3)
+    new_image = multiply_pixels(image=image, vertical=2, horizontal=3, img_height=2, img_width=2)
     print(new_image)
     np.testing.assert_allclose(
         new_image,
@@ -68,13 +59,11 @@ def test_multiply_pixels():
     )
 
 
-def test_multiply_pixels_for_multiple_images():
+def test_multiply_pixels_for_multiple_images() -> None:
     images = np.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
     new_images = np.array(
         [
-            multiply_pixels(
-                image=img, vertical=2, horizontal=3, img_height=2, img_width=2
-            )
+            multiply_pixels(image=img, vertical=2, horizontal=3, img_height=2, img_width=2)
             for img in images
         ]
     )
@@ -100,29 +89,9 @@ def test_multiply_pixels_for_multiple_images():
     )
 
 
-def test_perform_data_augmentation():
-    df_img = pd.read_csv((Path(__file__).parent.parent / "data/train_sample.csv"))
-    x_img, y_img = raw_df_to_x_y(raw_data_frame=df_img)
-    plt.imshow(x_img[0])
-    plt.show()
-
-    data_generator = tf.keras.preprocessing.image.ImageDataGenerator(rotation_range=10)
-    iterator = data_generator.flow(x_img, y_img)
-
-    for i in range(2):
-        # define subplot
-        plt.subplot(330 + 1 + i)
-        # generate batch of images
-        batch = iterator.next()
-        # convert to unsigned integers for viewing
-        image = batch[0].astype("uint8")
-        # plot raw pixel data
-        plt.imshow(batch[0])
-
-
-def test_read_in_images_as_dataframe():
+def test_read_in_images_as_dataframe() -> None:
     dir = Path(
-        "/Users/x/Desktop/Machine_Learning/digit_recognizer/data_generated/test_data_generated"
+        "/Users/x/Desktop/Machine_Learning/digit_recognizer/data/generated_data/"
     )
     dataframe = read_in_images_as_dataframe(dir, 28, 28)
     print(dataframe.shape)
@@ -138,13 +107,13 @@ def test_read_in_images_as_dataframe():
     print(data_split.get_shape())
 
 
-def test_concat():
+def test_concat() -> None:
     a = np.array([[0, 1, 2, 3]])
     b = np.array([[0, 11, 22, 33]])
     print(f"np.concatenate(a, b, axis=0) = {np.concatenate((a, b), axis=0)}")
 
 
-def test_evaluation():
+def test_evaluation() -> None:
     ground_truth = np.array([(0, 1, 0), (1, 0, 0), (0, 0, 1)])
     probabilities = np.array([(0.1, 0.9, 0.0), (0.3, 0.7, 0.0), (0.3, 0.7, 0.0)])
 
@@ -156,4 +125,4 @@ def test_evaluation():
         ground_truth=ground_truth,
         model_predictions=[probabilities],
         class_names=class_names,
-    ).save_html("comparison.html").display()
+    ).save_html("test_comparison.html").display()

@@ -5,15 +5,15 @@ import shutil
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Tuple, Callable
+from typing import Callable, Tuple, List
 
 import matplotlib.pyplot as plt
 import metriculous
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from PIL import Image
 from keras.models import Sequential
+from PIL import Image
 from tensorflow import keras
 from tensorflow.keras import layers, optimizers
 from tensorflow.keras.applications.resnet50 import ResNet50
@@ -21,6 +21,7 @@ from tensorflow.python.keras.losses import Loss
 from tensorflow.python.keras.optimizer_v2.optimizer_v2 import OptimizerV2
 
 DATA_DIR = Path(__file__).parent.parent.absolute() / "data"
+
 
 @dataclass
 class DataSplits:
@@ -31,7 +32,7 @@ class DataSplits:
     x_test: np.ndarray
     y_test: np.ndarray
 
-    def __add__(self, other):
+    def __add__(self, other: "DataSplits") -> "DataSplits":
         added_data_splits = DataSplits(
             x_train=np.append(self.x_train, other.x_train),
             y_train=np.append(self.y_train, other.y_train),
@@ -42,7 +43,7 @@ class DataSplits:
         )
         return added_data_splits
 
-    def get_shape(self):
+    def get_shape(self) -> Tuple[int, int, int, int, int, int]:
         return (
             len(self.x_train),
             len(self.y_train),
@@ -53,16 +54,16 @@ class DataSplits:
         )
 
 
-def stack_to_rgb_image(grey_scale_image: np.ndarray, axis=-1) -> np.ndarray:
+def stack_to_rgb_image(grey_scale_image: np.ndarray, axis: int = -1) -> np.ndarray:
     assert grey_scale_image.ndim == 2
     output = np.stack((grey_scale_image, grey_scale_image, grey_scale_image), axis=axis)
     return output
 
 
 def raw_df_to_x_y(
-        raw_data_frame: pd.DataFrame,
-        img_height=28,
-        img_width=28,
+    raw_data_frame: pd.DataFrame,
+    img_height: int = 28,
+    img_width: int = 28,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
     Returns a tuple (x, y_one_hot) if data frame has a 'label' column, otherwise (x, None).
@@ -77,9 +78,7 @@ def raw_df_to_x_y(
 
     x = np.array(
         [
-            stack_to_rgb_image(
-                grey_scale_image=np.reshape(pixels, (img_height, img_width))
-            )
+            stack_to_rgb_image(grey_scale_image=np.reshape(pixels, (img_height, img_width)))
             for pixels in df_x.values
         ]
     )
@@ -91,7 +90,7 @@ def raw_df_to_x_y(
     return x, y
 
 
-def one_hot_encoding(input_array: np.ndarray, num_classes: int):
+def one_hot_encoding(input_array: np.ndarray, num_classes: int) -> np.ndarray:
     assert input_array.ndim == 1
     return np.eye(num_classes)[input_array]
 
@@ -114,8 +113,8 @@ def make_simple_cnn(input_shape: Tuple[int, int, int], num_classes: int) -> Sequ
 
 
 def split_into_train_val_test_set(
-        x, y, validation_percentage=0.1, test_percentage=0.02
-):
+    x: np.ndarray, y: np.ndarray, validation_percentage: float = 0.1, test_percentage: float = 0.02
+) -> DataSplits:
     p = np.random.permutation(len(x))
     x_shuffled = x[p]
     y_shuffled = y[p]
@@ -133,7 +132,7 @@ def split_into_train_val_test_set(
     return datasplit
 
 
-def read_in_images_as_dataframe(directory: Path, img_height, img_width):
+def read_in_images_as_dataframe(directory: Path, img_height: int, img_width: int) -> pd.DataFrame:
     columns_for_df_max = img_height * img_width
     column_names = ["label"]
     for i in range(columns_for_df_max):
@@ -159,8 +158,12 @@ def read_in_images_as_dataframe(directory: Path, img_height, img_width):
 
 
 def multiply_pixels(
-        image: np.ndarray, vertical=2, horizontal=2, img_height=28, img_width=28
-):
+    image: np.ndarray,
+    vertical: int = 2,
+    horizontal: int = 2,
+    img_height: int = 28,
+    img_width: int = 28,
+) -> np.ndarray:
     new_image = np.zeros(shape=(img_height * vertical, img_width * horizontal))
 
     for i in range(img_height):
@@ -174,7 +177,7 @@ def multiply_pixels(
     return new_image
 
 
-def display_image(image: np.ndarray, title=""):
+def display_image(image: np.ndarray, title: str = "") -> None:
     assert image.ndim == 3
     assert image.shape[2] == 3
     plt.imshow(image, interpolation="nearest")
@@ -183,8 +186,8 @@ def display_image(image: np.ndarray, title=""):
 
 
 def display_wrong_predictions(
-        x_true: np.ndarray, y_true: np.ndarray, predictions: np.ndarray, save=False
-):
+    x_true: np.ndarray, y_true: np.ndarray, predictions: np.ndarray, save: bool = False
+) -> None:
     print("Display wrong predictions...")
     count = 0
     for i in range(len(predictions)):
@@ -198,8 +201,8 @@ def display_wrong_predictions(
 
 
 def save_predictions_for_submission(
-        df_submission, model, path_to_dir: Path, title="prediction"
-):
+    df_submission: pd.DataFrame, model: Sequential, path_to_dir: Path, title: str = "prediction"
+) -> None:
     x_submission, _ = raw_df_to_x_y(raw_data_frame=df_submission)
 
     print("Predict...")
@@ -211,17 +214,17 @@ def save_predictions_for_submission(
         file.write("ImageId,Label\n")
         count = 1
         for row in predictions:
-            file.write(
-                str(count) + "," + str(max(range(len(row)), key=row.__getitem__)) + "\n"
-            )
+            file.write(str(count) + "," + str(max(range(len(row)), key=row.__getitem__)) + "\n")
             count += 1
 
 
-def save_file(file: Path, destination_dir: Path):
+def save_file(file: Path, destination_dir: Path) -> None:
     shutil.copy(file, destination_dir)
 
 
-def save_model_comparison_in_cwd(x_test, y_test, model, path: Path, class_names):
+def save_model_comparison_in_cwd(
+    x_test: np.ndarray, y_test: np.ndarray, model: Sequential, path: Path, class_names: List[str]
+) -> None:
     print("Evaluate model...")
     model_prediction = model.predict(x_test)
     ground_truth = one_hot_encoding(y_test, 10)
@@ -235,12 +238,10 @@ def save_model_comparison_in_cwd(x_test, y_test, model, path: Path, class_names)
 
 
 def add_some_of_array_to_all_of_array(
-        a: np.ndarray, b: np.ndarray, fraction_from_b_in_result: float, seed: int = 42
+    a: np.ndarray, b: np.ndarray, fraction_from_b_in_result: float, seed: int = 42
 ) -> np.ndarray:
     assert 0.0 <= fraction_from_b_in_result <= 1.0, fraction_from_b_in_result
-    num_of_b_to_use = int(
-        len(a) * fraction_from_b_in_result / (1.0 - fraction_from_b_in_result)
-    )
+    num_of_b_to_use = int(len(a) * fraction_from_b_in_result / (1.0 - fraction_from_b_in_result))
     rng = np.random.RandomState(seed)
     indices_of_b_to_use = rng.choice(
         list(range(len(b))),
@@ -257,52 +258,51 @@ def add_some_of_array_to_all_of_array(
 
 
 def add_some_of_the_generated_data_to_val_and_train(
-        all_of: DataSplits,
-        with_some_of: DataSplits,
-        fraction_of_generated_data_to_use: float,
-        seed: int = 42,
+    all_of: DataSplits,
+    with_some_of: DataSplits,
+    fraction_of_generated_data_to_use: float,
+    seed: int = 42,
 ) -> DataSplits:
-    new_x_train = add_some_of_array_to_all_of_array(all_of.x_train,
-                                                    with_some_of.x_train,
-                                                    fraction_of_generated_data_to_use,
-                                                    seed)
-    new_y_train = add_some_of_array_to_all_of_array(all_of.y_train,
-                                                    with_some_of.y_train,
-                                                    fraction_of_generated_data_to_use,
-                                                    seed)
+    new_x_train = add_some_of_array_to_all_of_array(
+        all_of.x_train, with_some_of.x_train, fraction_of_generated_data_to_use, seed
+    )
+    new_y_train = add_some_of_array_to_all_of_array(
+        all_of.y_train, with_some_of.y_train, fraction_of_generated_data_to_use, seed
+    )
 
-    new_x_val = add_some_of_array_to_all_of_array(all_of.x_val, with_some_of.x_val,
-                                                  fraction_of_generated_data_to_use,
-                                                  seed)
-    new_y_val = add_some_of_array_to_all_of_array(all_of.y_val, with_some_of.y_val,
-                                                  fraction_of_generated_data_to_use,
-                                                  seed)
+    new_x_val = add_some_of_array_to_all_of_array(
+        all_of.x_val, with_some_of.x_val, fraction_of_generated_data_to_use, seed
+    )
+    new_y_val = add_some_of_array_to_all_of_array(
+        all_of.y_val, with_some_of.y_val, fraction_of_generated_data_to_use, seed
+    )
 
-    return DataSplits(x_train=new_x_train,
-                      y_train=new_y_train,
-                      x_val=new_x_val,
-                      y_val=new_y_val,
-                      x_test=all_of.x_test,
-                      y_test=all_of.y_test
-                      )
+    return DataSplits(
+        x_train=new_x_train,
+        y_train=new_y_train,
+        x_val=new_x_val,
+        y_val=new_y_val,
+        x_test=all_of.x_test,
+        y_test=all_of.y_test,
+    )
 
 
 def trial_run(
-        make_model: Callable[[], Sequential],
-        optimizer: OptimizerV2,
-        loss: Loss,
-        data_splits: DataSplits,
-        data_splits_generated_data: DataSplits,
-        max_epochs: int,
-        experiment_dir: Path,
-        num_classes: int = 10,
-        metrics: str = "accuracy",
-        fraction_of_generated_data_to_use: float = 0.0,
-        display_wrong_pred: bool = False,
-        save_predictions: bool = True,
-        save_evaluation: bool = True,
-        seed: int = 42,
-):
+    make_model: Callable[[], Sequential],
+    optimizer: OptimizerV2,
+    loss: Loss,
+    data_splits: DataSplits,
+    data_splits_generated_data: DataSplits,
+    max_epochs: int,
+    experiment_dir: Path,
+    num_classes: int = 10,
+    metrics: str = "accuracy",
+    fraction_of_generated_data_to_use: float = 0.0,
+    display_wrong_pred: bool = False,
+    save_predictions: bool = True,
+    save_evaluation: bool = True,
+    seed: int = 42,
+) -> None:
     trial_dir = experiment_dir / f'trial_{time.strftime("%Y-%m-%d-%H%M%S")}'
     Path.mkdir(trial_dir)
 
@@ -310,11 +310,10 @@ def trial_run(
         all_of=data_splits,
         with_some_of=data_splits_generated_data,
         fraction_of_generated_data_to_use=fraction_of_generated_data_to_use,
-        seed=seed)
-
-    y_train_one_hot = one_hot_encoding(
-        data_splits_final.y_train, num_classes=num_classes
+        seed=seed,
     )
+
+    y_train_one_hot = one_hot_encoding(data_splits_final.y_train, num_classes=num_classes)
     y_val_one_hot = one_hot_encoding(data_splits_final.y_val, num_classes=num_classes)
 
     model = make_model()
@@ -364,17 +363,16 @@ def trial_run(
         )
 
 
-def main(mnist_height: int = 28, mnist_width: int = 28, mnist_num_classes: int = 10):
+def main(mnist_height: int = 28, mnist_width: int = 28, mnist_num_classes: int = 10) -> None:
     experiment_dir = (
-            Path(__file__).parent.parent
-            / "experiments"
-            / f"experiment_{time.strftime('%Y-%m-%d-%H%M%S')}"
+        Path(__file__).parent.parent
+        / "experiments"
+        / f"experiment_{time.strftime('%Y-%m-%d-%H%M%S')}"
     )
 
     Path.mkdir(experiment_dir, exist_ok=True, parents=True)
     save_file(file=Path(__file__), destination_dir=experiment_dir)
     os.chdir(experiment_dir)
-
 
     print("Loading training CSV file...")
     df_train = pd.read_csv(DATA_DIR / "mnist_train.csv")
@@ -388,9 +386,7 @@ def main(mnist_height: int = 28, mnist_width: int = 28, mnist_num_classes: int =
     )
 
     print("Converting data frames to arrays...")
-    x_train, y_train = raw_df_to_x_y(
-        raw_data_frame=df_train
-    )
+    x_train, y_train = raw_df_to_x_y(raw_data_frame=df_train)
     x_train_generated_data, y_train_generated_data = raw_df_to_x_y(
         raw_data_frame=df_train_generated_data
     )
@@ -416,7 +412,7 @@ def main(mnist_height: int = 28, mnist_width: int = 28, mnist_num_classes: int =
             input_shape=(mnist_height, mnist_width, 3), num_classes=mnist_num_classes
         )
 
-    def make_resnet():
+    def make_resnet() -> ResNet50:
         return ResNet50(
             input_shape=(mnist_height, mnist_width, 3),
             include_top=True,
@@ -424,7 +420,15 @@ def main(mnist_height: int = 28, mnist_width: int = 28, mnist_num_classes: int =
             classes=10,
         )
 
-    for learning_rate in (1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7, ):
+    for learning_rate in (
+        1e-1,
+        1e-2,
+        1e-3,
+        1e-4,
+        1e-5,
+        1e-6,
+        1e-7,
+    ):
         for model in [make_simple_model]:
             for data_to_use in [0.3, 0.4, 0.5]:
                 # for model in (make_simple_model, make_resnet):
